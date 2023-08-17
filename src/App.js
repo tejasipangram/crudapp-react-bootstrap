@@ -19,13 +19,12 @@ function App() {
   //creating a list
   //when we create a list we will update the alldata and currentdata
 
-  const createList = (title, body) => {
-    fetch("https://jsonplaceholder.typicode.com/posts", {
+  const createList = (title, description) => {
+    fetch(`${process.env.REACT_APP_SERVER}/create`, {
       method: "POST",
       body: JSON.stringify({
         title: title,
-        body: body,
-        userId: 1,
+        description: description,
       }),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
@@ -33,54 +32,49 @@ function App() {
     })
       .then((response) => response.json())
       .then((json) => {
-        setAllData((prev) => {
-          return [json, ...prev];
-        });
+        if (!allData) {
+          setAllData(json.data);
+        } else {
+          setAllData((prev) => {
+            return [json.data, ...prev];
+          });
+        }
 
         setKey(Math.random());
       });
   };
   //getting the data from json api
   const getAllData = () => {
-    fetch("https://jsonplaceholder.typicode.com/posts")
+    fetch(`${process.env.REACT_APP_SERVER}/read`)
       .then((response) => response.json())
       .then((json) => {
-        const data = json.slice(
-          (currentPage - 1) * 10,
-          (currentPage - 1) * 10 + 10
-        );
-
-        setCurrentData(data);
-        setTotaItems(json.length);
-        setAllData(json);
+        setTotaItems(json.data.length);
+        setAllData(json.data);
       });
   };
 
   //updating the list
 
   const updateList = async (id, title, body) => {
-    const res = await fetch(
-      `https://jsonplaceholder.typicode.com/posts/${id}`,
-      {
-        method: "PUT",
-        body: JSON.stringify({
-          id: id,
-          title: title,
-          body: body,
-          userId: 1,
-        }),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      }
-    );
+    const res = await fetch(`${process.env.REACT_APP_SERVER}/update/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        id: id,
+        title: title,
+        body: body,
+        userId: 1,
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    });
 
     const data = await res.json();
 
     const newData = allData.map((list, index) => {
-      if (data.id === list.id) {
-        list.title = data.title;
-        list.body = data.body;
+      if (data.data._id === list._id) {
+        list.title = title;
+        list.body = body;
       }
       return list;
     });
@@ -91,31 +85,37 @@ function App() {
   //deleting a list
 
   const deleteList = async (id) => {
-    await fetch("https://jsonplaceholder.typicode.com/posts/1", {
+    await fetch(`${process.env.REACT_APP_SERVER}/delete/${id}`, {
       method: "DELETE",
     });
+    await getAllData();
+    // const newData = allData.filter((list, index) => {
+    //   console.log(list._id, id);
+    //   return list._id !== id;
+    // });
 
-    const newData = allData.filter((list, index) => {
-      return list.id !== id;
-    });
-
-    setAllData(newData);
+    // console.log(newData);
+    // setAllData(newData);
   };
 
   useEffect(() => {
-    if (allData.length < 1) {
-      getAllData();
-    }
+    getAllData();
   }, []);
 
   useEffect(() => {
-    const data = allData.slice(
-      (currentPage - 1) * 10,
-      (currentPage - 1) * 10 + 10
-    );
+    console.log(allData);
+    if (allData.length > 0) {
+      const data = allData.slice(
+        (currentPage - 1) * 10,
+        (currentPage - 1) * 10 + 10
+      );
 
-    setCurrentData(data);
-    setTotaItems(allData.length);
+      setCurrentData(data);
+
+      setTotaItems(allData.length);
+    } else {
+      setCurrentData([]);
+    }
   }, [allData, key]);
   return (
     <GlobalContext.Provider
@@ -133,17 +133,20 @@ function App() {
         <NavbarComp />
         <CreateList />
         <div className="d-flex flex-wrap gap-4 justify-content-center">
-          {currentData &&
+          {currentData.length > 0 ? (
             currentData.map((list, index) => {
               return (
                 <ListCard
-                  key={list.id}
+                  key={list._id}
                   title={list.title}
-                  body={list.body}
-                  id={list.id}
+                  description={list.description}
+                  id={list._id}
                 />
               );
-            })}
+            })
+          ) : (
+            <div>No data found</div>
+          )}
         </div>
         <PaginationBasic />
       </div>

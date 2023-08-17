@@ -39,6 +39,7 @@ function CreateList({ name, title = "", body = "" }) {
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>List Title</Form.Label>
               <Form.Control
+                required
                 onChange={onChangeTitleHandler}
                 type="text"
                 value={modalTitle}
@@ -50,6 +51,7 @@ function CreateList({ name, title = "", body = "" }) {
             >
               <Form.Label>Description</Form.Label>
               <Form.Control
+                required
                 onChange={onChangeBodyeHandler}
                 as="textarea"
                 rows={3}

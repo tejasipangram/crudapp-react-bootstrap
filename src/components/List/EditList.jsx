@@ -3,7 +3,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import { GlobalContext } from "../../GloblaCotext";
-function EditList({ id, name, title, body }) {
+function EditList({ id, name, title, description }) {
   const [show, setShow] = useState(false);
   const { updateList, setKey } = React.useContext(GlobalContext);
   const handleClose = () => setShow(false);
@@ -11,7 +11,7 @@ function EditList({ id, name, title, body }) {
   const currentInnerWidth = window.innerWidth;
   const colsValue = currentInnerWidth > 400 ? 35 : 25;
   const [modalTitle, setModalTitle] = React.useState(title);
-  const [modalBody, setModalBody] = React.useState(body);
+  const [modalBody, setModalBody] = React.useState(description);
   const onChangeTitleHandler = (e) => {
     setModalTitle(e.target.value);
   };

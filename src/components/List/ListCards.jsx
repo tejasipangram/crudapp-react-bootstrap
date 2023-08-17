@@ -4,7 +4,7 @@ import EditList from "./EditList";
 import { useContext, useState } from "react";
 import { GlobalContext } from "../../GloblaCotext";
 
-function ListCard({ title, body, id }) {
+function ListCard({ title, description, id }) {
   const [showMore, setShowMore] = useState(false);
   const { deleteList } = useContext(GlobalContext);
   return (
@@ -14,7 +14,7 @@ function ListCard({ title, body, id }) {
         <Card.Text>
           {showMore ? (
             <div>
-              {body}
+              {description}
               <a
                 role="button"
                 className="text-blue cursur-pointer mx-2"
@@ -27,7 +27,7 @@ function ListCard({ title, body, id }) {
             </div>
           ) : (
             <div>
-              {body.slice(0, 50)}
+              {description.slice(0, 50)}
               <a
                 role="button"
                 className="text-blue mx-2"
@@ -40,7 +40,7 @@ function ListCard({ title, body, id }) {
             </div>
           )}
         </Card.Text>
-        <EditList id={id} title={title} body={body} name="EDIT" />
+        <EditList id={id} title={title} description={description} name="EDIT" />
         <Button
           onClick={() => {
             deleteList(id);
