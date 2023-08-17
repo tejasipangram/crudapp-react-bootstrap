@@ -1,16 +1,45 @@
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import EditList from "./EditList";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { GlobalContext } from "../../GloblaCotext";
 
 function ListCard({ title, body, id }) {
+  const [showMore, setShowMore] = useState(false);
   const { deleteList } = useContext(GlobalContext);
   return (
     <Card style={{ width: "25rem", marginTop: "1rem" }}>
       <Card.Body>
         <Card.Title>{title}</Card.Title>
-        <Card.Text>{body}</Card.Text>
+        <Card.Text>
+          {showMore ? (
+            <div>
+              {body}
+              <a
+                role="button"
+                className="text-blue cursur-pointer mx-2"
+                onClick={() => {
+                  setShowMore(!showMore);
+                }}
+              >
+                Hide
+              </a>
+            </div>
+          ) : (
+            <div>
+              {body.slice(0, 50)}
+              <a
+                role="button"
+                className="text-blue mx-2"
+                onClick={() => {
+                  setShowMore(!showMore);
+                }}
+              >
+                More
+              </a>
+            </div>
+          )}
+        </Card.Text>
         <EditList id={id} title={title} body={body} name="EDIT" />
         <Button
           onClick={() => {
